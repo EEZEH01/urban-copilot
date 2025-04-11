@@ -1,8 +1,9 @@
-# app/agents.py
-
 class UrbanAgent:
     def __init__(self):
-        print("UrbanAgent inicializado")
+        # Here you can load knowledge, data or connect to a database
+        pass
 
-    def respond(self, message):
-        return f"Respuesta de UrbanAgent a: {message}"
+    def answer_question(self, question):
+        # Logic to process and return answer
+        return f"This is a sample response to: {question}"
+
