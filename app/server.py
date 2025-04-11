@@ -1,53 +1,44 @@
-import sys
-import os
+# server.py
+
 import logging
-
-# Add the root directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-# Flask server for Urban Copilot
 from flask import Flask, request, jsonify
-from app.agents import UrbanAgent
+from app.agents.urban_agent import UrbanAgent  # Specific import
 
-app = Flask(__name__)
-agent = UrbanAgent()
+# Initialize Flask App
+def create_app():
+    app = Flask(__name__)
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+    # Initialize Agent
+    agent = UrbanAgent()
 
-@app.before_request
-def log_request_info():
-    logger.info(f"Request: {request.method} {request.url}")
+    # Configure Logging
+    configure_logging(app)
 
-@app.after_request
-def log_response_info(response):
-    logger.info(f"Response: {response.status_code} {response.get_data(as_text=True)}")
-    return response
+    @app.route("/ask", methods=["POST"])
+    def ask():
+        data = request.get_json()
+        question = data.get("question", "")
+        response = agent.run(question)
+        return jsonify({"response": response})
 
-@app.route('/')
-def home():
-    return "Welcome to Urban Copilot!"
+    return app
 
-@app.route('/favicon.ico')
-def favicon():
-    return "", 204
 
-# Add route to interact with UrbanAgent
-@app.route('/api/respond', methods=['POST'])
-def respond():
-    user_input = request.json.get('message', '')
-    if not user_input:
-        return jsonify({'error': 'Message is required'}), 400
+def configure_logging(app):
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger(__name__)
 
-    response = agent.respond(user_input)
-    return jsonify({'response': response})
+    @app.before_request
+    def log_request():
+        logger.info(f"Request: {request.method} {request.url}")
 
-# Serve static files
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    return app.send_static_file(filename)
+    @app.after_request
+    def log_response(response):
+        logger.info(f"Response Status: {response.status_code}")
+        return response
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
