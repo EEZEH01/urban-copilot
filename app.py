@@ -1,9 +1,7 @@
-# app/app.py
+from app.server import create_app
 
-from app.agents import UrbanAgent
+app = create_app()
 
 if __name__ == "__main__":
-    agent = UrbanAgent()
-    user_input = input("Escribe tu mensaje: ")
-    response = agent.respond(user_input)
-    print(response)
+    app.run(debug=True)
+
