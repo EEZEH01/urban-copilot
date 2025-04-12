@@ -1,0 +1,10 @@
+{
+  "name": "Urban Copilot",
+  "image": "mcr.microsoft.com/devcontainers/python",
+  "postCreateCommand": "pip install -r requirements.txt",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}
