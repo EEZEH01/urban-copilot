@@ -1,13 +1,18 @@
-# __init__.py
-
+# app/__init__.py
 from flask import Flask
-from config import config  # Import the configuration from config.py
+from app.routes import urban_bp  # Import the Blueprint
 
 def create_app():
-    app = Flask(__name__)
+    """
+    Create and configure the Flask application.
 
-    # Load the configuration from the config.py file
-    app.config.from_object(config)  # This applies the configuration settings to the Flask app
+    This function initializes the Flask app and registers the routes.
+    """
+    app = Flask(__name__)  # Create a new Flask app instance
+    
+    # Register the Blueprint with the app
+    app.register_blueprint(urban_bp)
 
     return app
+
 
