@@ -19,4 +19,21 @@ Solve daily city problems directly from a conversational interface.
 ## Demo video
 (coming soon)
 
----
+## Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Azure account with Web App service
+- `.env` file configured with necessary environment variables
+
+### Steps
+1. Build and run locally:
+   ```bash
+   docker-compose up --build
+   ```
+
+2. Deploy to Azure:
+   - Set up Azure credentials and publish profile as GitHub secrets.
+   - Push changes to the `main` branch to trigger the GitHub Actions workflow.
+
+3. Access the app at the Azure Web App URL.
