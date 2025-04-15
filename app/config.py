@@ -15,8 +15,18 @@ class Config:
     AZURE_API_KEY = os.getenv("AZURE_API_KEY", "")  # Azure API key to interact with Azure services
     AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT", "")  # Azure endpoint URL for accessing Azure services
     
-    # Database Configuration (if using a database)
-    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///db/development.db")  # Default to SQLite; change to another DB URL if needed (e.g., PostgreSQL)
+    # Database Configuration
+    DB_USER = os.getenv("DB_USER", "urban_copilot_user")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DB_HOST = os.getenv("DB_HOST", "db")
+    DB_PORT = os.getenv("DB_PORT", "5432")
+    DB_NAME = os.getenv("DB_NAME", "urban_copilot")
+    
+    # Construct Database URL
+    if not DB_PASSWORD:
+        raise ValueError("Database password must be set in environment variables")
+        
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
     # Optional: Other Configurations
     DEBUG = os.getenv("DEBUG", "True") == "True"  # General debug mode for the application; can be controlled by environment

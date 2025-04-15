@@ -7,8 +7,8 @@ set -e
 RESOURCE_GROUP="urban-copilot-rg"
 APP_SERVICE_PLAN="urban-copilot-plan"
 WEB_APP_NAME="urban-copilot-app"
-REGION="eastus"
-DOCKER_IMAGE="your-dockerhub-or-acr/urban-copilot:latest"  # Replace with your registry image
+REGION="brazilsouth"
+DOCKER_IMAGE="eezeh01/urban-copilot:latest"
 
 # Login to Azure if not already logged in
 az login
@@ -20,11 +20,8 @@ az login
 # For Azure Container Registry (ACR):
 # az acr login --name <acr_name>
 
-# Create a resource group
-az group create --name $RESOURCE_GROUP --location $REGION
-
-# Create an App Service plan
-az appservice plan create --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP --sku B1 --is-linux
+# Use existing resource group and app service plan
+echo "Using existing resource group: $RESOURCE_GROUP"
 
 # Create a Web App for Containers
 az webapp create --resource-group $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --name $WEB_APP_NAME --deployment-container-image-name $DOCKER_IMAGE
