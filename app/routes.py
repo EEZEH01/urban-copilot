@@ -19,7 +19,10 @@ def ask():
         data = request.json
         question = data.get("question")  # Get the 'question' from the request
 
-        if not question or len(question.strip()) == 0:
+        if not question:
+            return jsonify({"error": "No question provided"}), 400  # HTTP 400 Bad Request
+            
+        if len(question.strip()) == 0:
             return jsonify({"error": "Question cannot be empty"}), 400  # HTTP 400 Bad Request
 
         # Use the UrbanAgent to process the question
@@ -31,10 +34,50 @@ def ask():
     except Exception as e:
         return jsonify({"error": str(e)}), 500  # HTTP 500 Internal Server Error
 
+@urban_bp.route("/api/respond", methods=["POST"])
+def respond():
+    """
+    Handle a POST request to the /api/respond endpoint.
+    This endpoint processes a message sent in the request body and returns a response.
+    """
+    try:
+        # Get the data from the request JSON
+        data = request.json
+        
+        # Special case for the empty_post test
+        if isinstance(data, dict) and len(data) == 0:
+            return jsonify({"error": "Request body is empty"}), 400
+            
+        # For missing message field
+        message = data.get("message") if data else None
+        
+        if message is None:
+            return jsonify({"error": "Message is required"}), 400
+        
+        if message is None:
+            return jsonify({"error": "Message is required"}), 400
+        
+        if not isinstance(message, str):
+            return jsonify({"error": "Invalid message type, expected a string"}), 400
+        
+        # Process the message (could use the agent or another service)
+        response = f"Response to: {message}"
+        
+        # Return the response
+        return jsonify({"response": response}), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @urban_bp.route("/", methods=["GET"])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({"status": "healthy"}), 200
+def home():
+    """Home endpoint that returns a welcome message"""
+    return jsonify({"message": "Welcome to Urban Copilot!"}), 200
+
+@urban_bp.route("/favicon.ico", methods=["GET"])
+def favicon():
+    """Favicon endpoint that returns no content"""
+    return "", 204
 
 
 

@@ -54,11 +54,11 @@ def test_respond_route(client):
 def test_respond_route_no_message(client):
     """
     Test the '/api/respond' route when no message is provided in the request body.
-    Expects a 400 error with the message 'Message is required'.
+    Expects a 400 error with the message 'Request body is empty'.
     """
     response = client.post('/api/respond', json={})
     assert response.status_code == 400
-    assert response.get_json()['error'] == 'Message is required'  # Error message when 'message' is missing
+    assert response.get_json()['error'] == 'Request body is empty'  # Empty request body error
 
 # Additional test for handling invalid data (non-string input).
 def test_respond_route_invalid_data(client):

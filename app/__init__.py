@@ -10,10 +10,9 @@ def create_app():
     and sets up any necessary configurations.
     """
     app = Flask(__name__)  # Create a new Flask app instance
-    
-    # Register the Blueprint with the app
+      # Register the Blueprint with the app
     # The 'urban_bp' blueprint contains all the routes related to urban topics
-    app.register_blueprint(urban_bp, url_prefix='/urban')  # Optional: add a URL prefix
+    app.register_blueprint(urban_bp)  # Registering at root level for proper URL routing
 
     # Optional: Additional configurations or middlewares can be set here
     # For example, app.config.from_pyfile('config.py')

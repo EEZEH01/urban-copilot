@@ -22,6 +22,10 @@ COPY --from=builder /opt/venv /opt/venv
 # Set the virtual environment path to use the correct pip
 ENV PATH="/opt/venv/bin:$PATH"
 
+# Copy the startup script first (smaller file that changes less frequently)
+COPY startup.sh /
+RUN chmod +x /startup.sh
+
 # Copy the application code into the container
 COPY . .
 
@@ -32,26 +36,9 @@ EXPOSE 5000
 ENV PYTHONPATH=/app
 ENV FLASK_APP=app.server:app
 
-# Add health check for monitoring
+# Add health check using Python itself
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-CMD curl -f http://localhost:5000/ || exit 1
-
-# Command to run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app.server:app"]
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-CMD curl -f http://localhost:5000/ || exit 1
-
-# Set Python path and working directory
-ENV PYTHONPATH=/app
-WORKDIR /app
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" || exit 1
 
 # Command to run the application using our startup script
-COPY startup.sh /
-RUN chmod +x /startup.sh
 CMD ["/startup.sh"]
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-CMD curl -f http://localhost:5000/ || exit 1
-
-# Command to run the application
-CMD ["python", "app/server.py"]
-
