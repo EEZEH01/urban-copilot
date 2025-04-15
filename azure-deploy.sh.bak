@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Variables
+RESOURCE_GROUP="urban-copilot-rg"
+APP_SERVICE_PLAN="urban-copilot-plan"
+WEB_APP_NAME="urban-copilot-app"
+REGION="brazilsouth"  # Change to a region with available quotas
+CONTAINER_IMAGE="urban-copilot:latest"
+
+# Register the Microsoft.Web namespace if not already registered
+az provider register --namespace Microsoft.Web
+
+# Create a resource group
+az group create --name $RESOURCE_GROUP --location $REGION
+
+# Create an App Service plan
+az appservice plan create --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP --sku B1 --is-linux --location $REGION
+
+# Create a Web App for Containers
+az webapp create --resource-group $RESOURCE_GROUP --plan $APP_SERVICE_PLAN --name $WEB_APP_NAME --runtime "DOCKER|$CONTAINER_IMAGE"
+
+# Configure the Web App to use the container
+az webapp config container set --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP --container-image-name $CONTAINER_IMAGE
+
+# Output the Web App URL
+WEB_APP_URL=$(az webapp show --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP --query defaultHostName -o tsv)
+echo "Web App deployed at: https://$WEB_APP_URL"
