@@ -1,15 +1,21 @@
 {
-  "name": "Urban Copilot",
-  "image": "mcr.microsoft.com/devcontainers/python",
+  "name": "Urban Copilot",  // Name of the project or environment
+  "image": "mcr.microsoft.com/devcontainers/python:3.10",  // Base image for Python 3.10, ensures compatibility and consistency across environments
   "features": {
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}  // Allows Docker to run inside the container
   },
-  "postCreateCommand": "pip install -r requirements.txt",
+  "forwardPorts": [5000, 8501],  // Exposes necessary ports for running web apps (Flask, Streamlit) inside the container
+  "postCreateCommand": "pip install -r requirements.txt",  // Installs the dependencies defined in the requirements.txt file after the container is created
   "customizations": {
     "vscode": {
-      "extensions": ["ms-python.python"]
+      "extensions": ["ms-python.python"]  // Automatically installs the Python extension for VSCode to support Python development
     }
+  },
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash",  // Sets bash as the default terminal profile for better compatibility
+    "python.defaultInterpreterPath": "/usr/local/bin/python"  // Ensures VSCode uses the correct Python interpreter inside the container
   }
 }
+
 
 
