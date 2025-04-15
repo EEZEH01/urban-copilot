@@ -37,21 +37,3 @@ az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $APP_SE
     CACHE_TYPE="$CACHE_TYPE"
 
 echo "Environment variables configured successfully!"
-az login
-
-# Configure App Service environment variables
-echo "Setting environment variables in Azure App Service..."
-az webapp config appsettings set --resource-group $RESOURCE_GROUP --name $APP_SERVICE_NAME --settings \
-    SECRET_KEY="$SECRET_KEY" \
-    FLASK_APP="$FLASK_APP" \
-    FLASK_ENV="$FLASK_ENV" \
-    DB_USER="$DB_USER" \
-    DB_PASSWORD="$DB_PASSWORD" \
-    DB_HOST="$POSTGRES_SERVER_NAME.postgres.database.azure.com" \
-    DB_PORT="$DB_PORT" \
-    DB_NAME="$DB_NAME" \
-    AZURE_API_KEY="$AZURE_API_KEY" \
-    AZURE_ENDPOINT="$AZURE_ENDPOINT" \
-    CACHE_TYPE="$CACHE_TYPE"
-
-echo "Environment variables configured successfully!"
