@@ -13,6 +13,8 @@ POSTGRES_PASSWORD="P@ssw0rd$(date +%s)"  # Generate a secure random password
 POSTGRES_DB="urbancopilotdb"
 REGION="brazilsouth"
 DOCKER_IMAGE="urban-copilot:latest"
+COGNITIVE_SERVICE_NAME="urban-copilot-ai"
+COGNITIVE_SERVICE_KIND="TextAnalytics"  # Options: TextAnalytics, ComputerVision, OpenAI, etc.
 
 echo "=========================================="
 echo "Urban Copilot Azure Deployment"
@@ -92,6 +94,30 @@ az webapp create \
   --name $WEB_APP_NAME \
   --deployment-container-image-name $ACR_LOGIN_SERVER/$DOCKER_IMAGE
 
+# Create Cognitive Services resource
+echo "Creating Azure Cognitive Services resource..."
+az cognitiveservices account create \
+  --name $COGNITIVE_SERVICE_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --kind $COGNITIVE_SERVICE_KIND \
+  --sku S0 \
+  --location $REGION \
+  --yes
+
+# Get Cognitive Services keys
+echo "Retrieving Cognitive Services keys..."
+COGNITIVE_KEY=$(az cognitiveservices account keys list \
+  --name $COGNITIVE_SERVICE_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --query key1 \
+  --output tsv)
+
+COGNITIVE_ENDPOINT=$(az cognitiveservices account show \
+  --name $COGNITIVE_SERVICE_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --query endpoint \
+  --output tsv)
+
 # Configure Web App settings
 echo "Configuring Web App settings..."
 az webapp config appsettings set \
@@ -106,7 +132,9 @@ az webapp config appsettings set \
   DB_PASSWORD="$POSTGRES_PASSWORD" \
   DB_HOST="$POSTGRES_SERVER.postgres.database.azure.com" \
   DB_PORT=5432 \
-  DB_NAME="$POSTGRES_DB"
+  DB_NAME="$POSTGRES_DB" \
+  AZURE_API_KEY="$COGNITIVE_KEY" \
+  AZURE_ENDPOINT="$COGNITIVE_ENDPOINT"
 
 # Configure container settings for the Web App
 echo "Configuring container settings..."
