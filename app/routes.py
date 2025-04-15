@@ -1,3 +1,12 @@
+from flask import Blueprint, request, jsonify
+from app.agents.urban_agent import UrbanAgent
+
+# Create a Blueprint for the urban routes
+urban_bp = Blueprint('urban', __name__)
+
+# Initialize the agent
+agent = UrbanAgent()
+
 @urban_bp.route("/api/ask", methods=["POST"])
 def ask():
     """
@@ -20,9 +29,12 @@ def ask():
         return jsonify({"response": response}), 200  # HTTP 200 OK
 
     except Exception as e:
-        # Log the exception and return a 500 Internal Server Error response
-        print(f"Error: {e}")
-        return jsonify({"error": "An unexpected error occurred"}), 500  # HTTP 500 Internal Server Error
+        return jsonify({"error": str(e)}), 500  # HTTP 500 Internal Server Error
+
+@urban_bp.route("/", methods=["GET"])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({"status": "healthy"}), 200
 
 
 
