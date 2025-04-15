@@ -1,44 +1,19 @@
-# server.py
-
-import logging
-from flask import Flask, request, jsonify
-from app.agents.urban_agent import UrbanAgent  # Specific import
-
-# Initialize Flask App
-def create_app():
-    app = Flask(__name__)
-
-    # Initialize Agent
-    agent = UrbanAgent()
-
-    # Configure Logging
-    configure_logging(app)
-
-    @app.route("/ask", methods=["POST"])
-    def ask():
+@app.route("/ask", methods=["POST"])
+def ask():
+    try:
         data = request.get_json()
-        question = data.get("question", "")
+        question = data.get("question", "").strip()
+
+        if not question:
+            return jsonify({"error": "Question cannot be empty"}), 400  # Bad request if no question is provided
+
+        # Use the agent to get the response
         response = agent.run(question)
         return jsonify({"response": response})
 
-    return app
+    except Exception as e:
+        # If something goes wrong, log the error and return a 500 Internal Server Error
+        logging.error(f"Error occurred: {e}")
+        return jsonify({"error": "An unexpected error occurred"}), 500  # Internal server error
 
-
-def configure_logging(app):
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-    logger = logging.getLogger(__name__)
-
-    @app.before_request
-    def log_request():
-        logger.info(f"Request: {request.method} {request.url}")
-
-    @app.after_request
-    def log_response(response):
-        logger.info(f"Response Status: {response.status_code}")
-        return response
-
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True, host="0.0.0.0", port=5000)
 
