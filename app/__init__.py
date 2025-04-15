@@ -1,5 +1,6 @@
 # app/__init__.py
-from flask import Flask
+import os
+from flask import Flask, send_from_directory
 from app.routes import urban_bp  # Import the Blueprint from the routes module
 
 def create_app():
@@ -9,13 +10,26 @@ def create_app():
     This function initializes the Flask app, registers the routes (via Blueprint),
     and sets up any necessary configurations.
     """
-    app = Flask(__name__)  # Create a new Flask app instance
-      # Register the Blueprint with the app
+    # Create a new Flask app instance with static folder at the project root
+    app = Flask(__name__, static_folder=None)
+    
+    # Register the Blueprint with the app
     # The 'urban_bp' blueprint contains all the routes related to urban topics
     app.register_blueprint(urban_bp)  # Registering at root level for proper URL routing
-
+    
+    # Serve static files from the static directory
+    @app.route('/static/<path:path>')
+    def serve_static(path):
+        return send_from_directory('../static', path)
+    
+    # Serve the main index.html file
+    @app.route('/')
+    def index():
+        return send_from_directory('../static', 'index.html')
+    
     # Optional: Additional configurations or middlewares can be set here
-    # For example, app.config.from_pyfile('config.py')
+    # Load configurations from environment variables
+    app.config.from_pyfile('config.py')
 
     return app
 

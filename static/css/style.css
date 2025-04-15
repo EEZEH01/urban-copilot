@@ -1,0 +1,84 @@
+/* Urban Copilot Main Styles */
+
+.chat-container {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.user-message, .assistant-message, .system-message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.user-message {
+    background-color: #e3f2fd;
+    margin-left: auto;
+    text-align: right;
+}
+
+.assistant-message {
+    background-color: #f1f1f1;
+    margin-right: auto;
+}
+
+.system-message {
+    background-color: #fff3cd;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: fit-content;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: fit-content;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .user-message, .assistant-message, .system-message {
+        max-width: 90%;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Custom scrollbar */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-message, .assistant-message, .system-message, .error-message {
+    animation: fadeIn 0.3s ease-out forwards;
+}
