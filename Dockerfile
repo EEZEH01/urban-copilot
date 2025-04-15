@@ -29,16 +29,16 @@ RUN chmod +x /startup.sh
 # Copy the application code into the container
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 5000
+# Expose the port the app runs on (Azure expects port 80)
+EXPOSE 80
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV FLASK_APP=app.server:app
+ENV FLASK_APP=wsgi:app
 
-# Add health check using Python itself
+# Add health check using Python itself (using port 80)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" || exit 1
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:80/')" || exit 1
 
 # Command to run the application using our startup script
 CMD ["/startup.sh"]

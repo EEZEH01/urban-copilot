@@ -10,4 +10,11 @@ else
     export PYTHONPATH=/home/site/wwwroot
 fi
 
-gunicorn --bind=0.0.0.0:5000 --workers=4 app.server:app
+# Print environment info for debugging
+echo "Current directory: $(pwd)"
+echo "Python path: $PYTHONPATH"
+echo "Directory listing:"
+ls -la
+
+# Use the correct WSGI application path (wsgi.py at the root)
+gunicorn --bind=0.0.0.0:80 --workers=2 --log-level debug wsgi:app
