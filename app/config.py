@@ -1,6 +1,10 @@
 import os
 
 class Config:
+    """
+    Config class to manage Flask and Azure configuration settings.
+    This class uses environment variables to configure the application.
+    """
     # General Flask Configuration
     SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key")  # Secret key used for sessions and cryptography
     FLASK_APP = os.getenv("FLASK_APP", "main.py")  # Main entry point file for the Flask app (can be overridden by environment)
@@ -17,7 +21,11 @@ class Config:
     # Optional: Other Configurations
     DEBUG = os.getenv("DEBUG", "True") == "True"  # General debug mode for the application; can be controlled by environment
 
+    # Optional: Cache configuration
+    CACHE_TYPE = os.getenv("CACHE_TYPE", "simple")  # Default cache type is "simple"; change for production
+
 # Instantiate the config class to be used later
 config = Config()
+
 
 
