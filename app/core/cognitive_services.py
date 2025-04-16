@@ -30,6 +30,38 @@ class CognitiveServicesClient:
             logger.warning("Azure Cognitive Services credentials not configured")
         else:
             logger.info(f"Azure Cognitive Services client initialized with endpoint: {self.endpoint}")
+            
+    def is_available(self) -> str:
+        """
+        Check if the Azure Cognitive Services API is available
+        
+        Returns:
+            str: "up" if the service is available, "down" if not
+        """
+        if not self.api_key or not self.endpoint:
+            return "down"
+            
+        try:
+            # Simple ping to the API
+            headers = {
+                "Ocp-Apim-Subscription-Key": self.api_key,
+                "Content-Type": "application/json"
+            }
+            response = requests.get(
+                f"{self.endpoint}/text/analytics/v3.1/languages",
+                headers=headers,
+                timeout=5
+            )
+            
+            # Check if we got a valid response
+            if response.status_code < 400:
+                return "up"
+            else:
+                logger.warning(f"Azure Cognitive Services returned status code: {response.status_code}")
+                return "down"
+        except Exception as e:
+            logger.error(f"Error checking Azure Cognitive Services availability: {e}")
+            return "down"
 
     def detect_language(self, text: str) -> Tuple[str, float]:
         """
@@ -136,7 +168,7 @@ class CognitiveServicesClient:
         """
         if not self.api_key or not self.endpoint:
             logger.warning("Azure Cognitive Services not configured, skipping key phrase extraction")
-            return []
+            return [text]  # Return the original text as a single phrase
             
         try:
             # Construct the request
@@ -167,4 +199,4 @@ class CognitiveServicesClient:
             
         except Exception as e:
             logger.error(f"Error extracting key phrases: {str(e)}")
-            return []  # Return empty list on error
+            return [text]  # Return the original text on error

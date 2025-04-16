@@ -2,6 +2,7 @@
 from app.core.agent_base import AgentBase
 from app.core.cognitive_services import CognitiveServicesClient
 import logging
+from typing import List
 
 class UrbanAgent(AgentBase):
     """
@@ -89,52 +90,39 @@ class UrbanAgent(AgentBase):
             else:
                 return f"Urban Copilot Response to: {question}"
                 
-    def generate_enhanced_response(self, question: str, key_phrases: list, sentiment: str) -> str:
+    def generate_enhanced_response(self, question: str, key_phrases: List[str], sentiment: str) -> str:
         """
-        Generate enhanced responses using AI-derived insights from the question.
+        Generate an enhanced response using AI insights from cognitive services
         
         Parameters:
         - question (str): The original question
-        - key_phrases (list): Key phrases extracted from the question
-        - sentiment (str): Sentiment of the question (positive, neutral, negative)
+        - key_phrases (List[str]): Extracted key phrases from the question
+        - sentiment (str): Detected sentiment of the question
         
         Returns:
-        - str: An enhanced response
+        - str: An enhanced response tailored to the question context
         """
-        # Extract urban-specific keywords from the key phrases
-        urban_keywords = {
-            "traffic": ["Traffic congestion is currently moderate in the downtown area. Peak hours are 7-9 AM and 4-6 PM.",
-                       "The city has implemented smart traffic lights that adapt to traffic flow."],
-            "housing": ["Housing prices have increased by 5% in urban centers over the past year.",
-                       "New affordable housing initiatives include mixed-use developments near transit hubs."],
-            "transportation": ["Public transportation ridership has increased by 12% this quarter.",
-                             "The city is expanding bike lanes and pedestrian-friendly infrastructure."],
-            "parks": ["The urban parks system covers 15% of the city's area.",
-                    "Green spaces have been shown to reduce urban heat and improve mental health."],
-            "development": ["Smart urban development focuses on sustainability and community needs.",
-                          "Recent projects include revitalizing the waterfront district."],
-            "pollution": ["Air quality monitoring stations show improved metrics compared to last year.",
-                        "The city has implemented a comprehensive waste management program."]
+        # Example implementation - in production, this could use more advanced NLP or LLM
+        topic_responses = {
+            "traffic": "The current traffic conditions show moderate congestion in the city center. Consider using public transit or alternative routes.",
+            "parking": "There are several parking spots available in the downtown area. You can use the city's parking app to find and reserve a spot.",
+            "weather": "The current weather is mild with a chance of light showers in the evening. It's a good day for outdoor activities with proper preparation.",
+            "event": "There are several city events happening this weekend including a farmers market, art exhibition, and community cleanup.",
+            "public transit": "The public transit system is operating normally with minor delays on the blue line due to scheduled maintenance.",
         }
         
-        # Check if any key phrases match our urban topics
+        # Check if any key phrases match our topics
         for phrase in key_phrases:
             phrase_lower = phrase.lower()
-            for keyword, responses in urban_keywords.items():
-                if keyword in phrase_lower:
-                    return responses[0]  # Return the first relevant response
+            for topic, response in topic_responses.items():
+                if topic in phrase_lower:
+                    return response
         
-        # If we have traffic in the question
-        if "traffic" in question.lower():
-            return urban_keywords["traffic"][0]
-        # If we have weather in the question
-        elif "weather" in question.lower():
-            return "The weather today is sunny with a high of 25°C. Urban areas may experience temperatures 2-3°C higher due to the heat island effect."
-        # Sentiment-based generic responses
-        elif sentiment == "negative":
-            return "I understand your concerns about urban issues. The city's strategic plan addresses challenges through data-driven solutions and community engagement."
+        # If no specific topic is matched, provide a general response
+        if sentiment == "negative":
+            return "I understand you may be concerned about this issue. The city has resources available to address urban problems. How can I help you specifically?"
         elif sentiment == "positive":
-            return "I'm glad you're enthusiastic about urban development! Our city continues to implement smart technologies and sustainable practices to enhance quality of life."
+            return "I'm glad you're interested in our city's services! How can I provide more specific information to help you?"
         else:
-            return "Urban areas are complex systems that require integrated planning approaches. Our smart city initiatives focus on sustainability, efficiency, and improved quality of life for residents."
+            return "Thank you for your question about urban services. Could you provide more specifics about what you're looking for in our city?"
 

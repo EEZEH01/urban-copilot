@@ -1,0 +1,40 @@
+{
+  "appSettings": [
+    {
+      "name": "WEBSITES_CONTAINER_START_TIME_LIMIT",
+      "value": "600"
+    },
+    {
+      "name": "WEBSITES_PORT",
+      "value": "80"
+    },
+    {
+      "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+      "value": "true"
+    },
+    {
+      "name": "FLASK_APP",
+      "value": "wsgi:app"
+    },
+    {
+      "name": "FLASK_ENV", 
+      "value": "production"
+    },
+    {
+      "name": "DB_USER",
+      "value": "pgadmin"
+    },
+    {
+      "name": "DB_PASSWORD",
+      "value": "P@ssw0rd1234"
+    },
+    {
+      "name": "DB_HOST",
+      "value": "urban-copilot-db.postgres.database.azure.com"
+    },
+    {
+      "name": "DB_NAME",
+      "value": "urbancopilotdb"
+    }
+  ]
+}
