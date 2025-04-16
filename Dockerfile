@@ -1,44 +1,42 @@
-# Use the official Python image as the base image
-FROM python:3.12-slim AS builder
+# Consolidated Dockerfile for Urban Copilot
+# Supports both local and Azure deployments using build arguments
 
-# Set the working directory in the container
+# Base image
+ARG PYTHON_VERSION=3.12-slim
+FROM python:${PYTHON_VERSION} AS builder
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Copy requirements and install dependencies in a virtual environment
 COPY requirements.txt ./
-
-# Install dependencies in a virtual environment in a single step
 RUN python -m venv /opt/venv && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Final image (production-ready)
-FROM python:3.12-slim
+# Final image
+FROM python:${PYTHON_VERSION}
 
-# Set the working directory before copying files
+# Set the working directory
 WORKDIR /app
 
 # Copy the virtual environment from the builder stage
 COPY --from=builder /opt/venv /opt/venv
 
-# Set the virtual environment path to use the correct pip
+# Set the virtual environment path
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy the startup script first (smaller file that changes less frequently)
-COPY startup.sh /
+# Copy application code and startup script
+COPY . .
+COPY startup.sh /startup.sh
 RUN chmod +x /startup.sh
 
-# Copy the application code into the container
-COPY . .
+# Expose port (default to 80 for Azure)
+ARG PORT=80
+ENV PORT=${PORT}
+EXPOSE ${PORT}
 
-# Expose the port the app runs on (Azure expects port 80)
-EXPOSE 80
-
-# Set environment variables
-ENV PYTHONPATH=/app
-ENV FLASK_APP=wsgi:app
-
-# Add health check using Python itself (using port 80)
+# Add health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:80/')" || exit 1
+  CMD python -c "import urllib.request; urllib.request.urlopen(f'http://localhost:{os.getenv('PORT', 80)}/')" || exit 1
 
-# Command to run the application using our startup script
+# Command to run the application
 CMD ["/startup.sh"]
